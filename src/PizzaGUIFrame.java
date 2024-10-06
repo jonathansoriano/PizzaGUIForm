@@ -55,6 +55,11 @@ public class PizzaGUIFrame extends JFrame {
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
 
+    /**
+     * This method creates the 3 horizontal  panels that include the
+     * Crust Panel (Radio Buttons), Toppings Panel (CheckBoxes), and ComboBox. They are all stacked on top of each other.
+     * This is due to the (Layout manager on the Frame itself.
+     */
     public void generateMenuPanel() {
         menuPanel = new JPanel(new GridLayout(1, 3));
 
@@ -107,6 +112,10 @@ public class PizzaGUIFrame extends JFrame {
         menuPanel.add(sizePanel);
     }
 
+    /**
+     *  This method creates the middle panel called the receipt panel. Doesn't include any nested panels like the menu panel.
+     *  This has the TextArea which gets updated every time the user orders or edits their order.
+     */
     public void generateReceiptPanel() {
         receiptPanel = new JPanel();
         receiptPanel.setBorder(new TitledBorder(new EtchedBorder(), "Order Total"));
@@ -118,6 +127,9 @@ public class PizzaGUIFrame extends JFrame {
         receiptPanel.add(scrollPane);
     }
 
+    /**
+     * This method creates the last panel, which includes 3 buttons, Order, Clear, and Exit.
+     */
     public void generateButtonPanel() {
         buttonPanel = new JPanel(new GridLayout(1, 3));
 
