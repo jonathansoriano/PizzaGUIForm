@@ -7,19 +7,10 @@ import java.awt.event.ActionEvent;
 public class PizzaGUIFrame extends JFrame {
     // 3 Main Panels
     private JPanel menuPanel;
-    private JPanel crustPanel;
-    private JPanel sizePanel;
-    private JPanel toppingsPanel;
 
     private JPanel receiptPanel;
 
     private JPanel buttonPanel;
-
-    // JButtons
-    private JButton orderBtn;
-    private JButton clearBtn;
-    private JButton quitBtn;
-    private ButtonGroup btnGroup;
 
     // Radio Buttons
     private JRadioButton thinCrustBtn;
@@ -42,7 +33,7 @@ public class PizzaGUIFrame extends JFrame {
 
     // Other Variables
     private String[] pizzaSizes;
-    private double[] sizePrices = {8.00, 12.00, 16.00, 20.00}; // Prices corresponding to sizes
+    private double[] sizePrices = {8.00, 12.00, 16.00, 20.00}; // Prices corresponding to pizzaSizes array's indexes
     private final double toppingPrice = 1.00;
 
     public PizzaGUIFrame() {
@@ -68,13 +59,13 @@ public class PizzaGUIFrame extends JFrame {
         menuPanel = new JPanel(new GridLayout(1, 3));
 
         // Crust Panel
-        crustPanel = new JPanel(new GridLayout(3, 1));
+        JPanel crustPanel = new JPanel(new GridLayout(3, 1));
         crustPanel.setBorder(new TitledBorder(new EtchedBorder(), "Type of Crust"));
         thinCrustBtn = new JRadioButton("Thin");
         regularCrustBtn = new JRadioButton("Regular", true); // Auto Selects Regular
         deepDishCrustBtn = new JRadioButton("Deep Dish");
 
-        btnGroup = new ButtonGroup();
+        ButtonGroup btnGroup = new ButtonGroup();
         btnGroup.add(thinCrustBtn);
         btnGroup.add(regularCrustBtn);
         btnGroup.add(deepDishCrustBtn);
@@ -84,16 +75,16 @@ public class PizzaGUIFrame extends JFrame {
         crustPanel.add(deepDishCrustBtn);
 
         // Size Panel
-        sizePanel = new JPanel();
+        JPanel sizePanel = new JPanel();
         sizePanel.setBorder(new TitledBorder(new EtchedBorder(), "Pizza Sizes"));
-
+        //Array for the ComboBox
         pizzaSizes = new String[]{"Small ($8.00)", "Medium ($12.00)", "Large ($16.00)", "Super ($20.00)"};
         sizeComboBox = new JComboBox<>(pizzaSizes);
 
         sizePanel.add(sizeComboBox);
 
         // Toppings Panel
-        toppingsPanel = new JPanel(new GridLayout(3, 2));
+        JPanel toppingsPanel = new JPanel(new GridLayout(3, 2));
         toppingsPanel.setBorder(new TitledBorder(new EtchedBorder(), "Pizza Toppings ($1 each)"));
 
         pepCheckBox = new JCheckBox("Pepperoni");
@@ -131,19 +122,20 @@ public class PizzaGUIFrame extends JFrame {
         buttonPanel = new JPanel(new GridLayout(1, 3));
 
         // Order Button
-        orderBtn = new JButton("Order");
+        // JButtons
+        JButton orderBtn = new JButton("Order");
         orderBtn.addActionListener((ActionEvent ae) -> {
             processOrder();
         });
 
         // Clear Button
-        clearBtn = new JButton("Clear");
+        JButton clearBtn = new JButton("Clear");
         clearBtn.addActionListener((ActionEvent ae) -> {
             clearForm();
         });
 
         // Quit Button
-        quitBtn = new JButton("Quit");
+        JButton quitBtn = new JButton("Quit");
         quitBtn.addActionListener((ActionEvent) -> {
             int result = JOptionPane.showConfirmDialog(null, "Are you sure you want to Quit?");
             if (result == JOptionPane.YES_OPTION) {
@@ -157,41 +149,52 @@ public class PizzaGUIFrame extends JFrame {
         buttonPanel.add(quitBtn);
     }
 
+    /**
+     * This method runs the functions of the Order button like, adding to the receipt TextArea what buttons, check boxes
+     * and combo boxes I have chosen. Also has all the math logic to get sub-total, taxes, and grand total for the order.
+     */
     private void processOrder() {
-        String crust = getSelectedCrust();
-        String size = (String) sizeComboBox.getSelectedItem();
-        int sizeIndex = sizeComboBox.getSelectedIndex();
-        double sizePrice = sizePrices[sizeIndex];
-        double totalToppingsPrice = calculateToppingsPrice();
+        String crust = getSelectedCrust(); //Returns what isSelected(); from the RadioButtons. (Thin,Regular,DeepDish)
+        String size = (String) sizeComboBox.getSelectedItem(); // Get the String value of Item selected in Combo box.
+        int sizeIndex = sizeComboBox.getSelectedIndex();//We need the index of the Selected Item from ComboBox since there's
+        // another Array whose indexes corresponds to the indexes in the ComboBox array.
+        double sizePrice = sizePrices[sizeIndex];//We use the selected ComboBox item and use it to find corresponding price in
+        //sizePrices array. (Array is in declared in line 45)
+        double totalToppingsPrice = calculateToppingsPrice();//Returns total toppings price based on which Checkboxes are selected with
+        //isSelected() method.
 
 
-        double subTotal = sizePrice + totalToppingsPrice;
+        double subTotal = sizePrice + totalToppingsPrice; //Pizza Size Price + Total Toppings Picked Price = subtotal
         double tax = subTotal * 0.07; // 7% tax
         double total = subTotal + tax;
 
         // Prepare receipt
-        StringBuilder receipt = new StringBuilder();
-        receipt.append("=========================================\n");
-        receipt.append(String.format("Type of Crust: %s\n\n", crust));
-        receipt.append(String.format("Size: %s\n\n", size));
-        receipt.append("Ingredients:\n\n");
+        String receipt = "";
+        receipt+="=========================================\n";
+        receipt += String.format("Type of Crust: %s\n\n", crust);
+        receipt += String.format("Size: %s\n\n", size);
+        receipt += "Ingredients:\n\n";
 
-        if (pepCheckBox.isSelected()) receipt.append("Pepperoni: $1.00\n");
-        if (baconCheckBox.isSelected()) receipt.append("Bacon: $1.00\n");
-        if (mushroomCheckBox.isSelected()) receipt.append("Mushrooms: $1.00\n");
-        if (pineappleCheckBox.isSelected()) receipt.append("Pineapple: $1.00\n");
-        if (chickenCheckBox.isSelected()) receipt.append("Chicken: $1.00\n");
-        if (pickleCheckBox.isSelected()) receipt.append("Pickles: $1.00\n");
+        if (pepCheckBox.isSelected()) receipt += "Pepperoni: $1.00\n";
+        if (baconCheckBox.isSelected()) receipt += "Bacon: $1.00\n";
+        if (mushroomCheckBox.isSelected()) receipt += "Mushrooms: $1.00\n";
+        if (pineappleCheckBox.isSelected()) receipt += "Pineapple: $1.00\n";
+        if (chickenCheckBox.isSelected()) receipt += "Chicken: $1.00\n";
+        if (pickleCheckBox.isSelected()) receipt += "Pickles: $1.00\n";
 
-        receipt.append(String.format("Sub-total: $%.2f\n\n", subTotal));
-        receipt.append(String.format("Tax: $%.2f\n\n", tax));
-        receipt.append("---------------------------------------------------------------------\n");
-        receipt.append(String.format("Total: $%.2f\n", total));
-        receipt.append("=========================================\n");
+        receipt += String.format("Sub-total: $%.2f\n\n", subTotal);
+        receipt += String.format("Tax: $%.2f\n\n", tax);
+        receipt += "---------------------------------------------------------------------\n";
+        receipt += String.format("Total: $%.2f\n", total);
+        receipt += "=========================================\n";
 
-        receiptTA.setText(receipt.toString());
+        receiptTA.setText(receipt);
     }
 
+    /**
+     * This method tells you what type of crust was picked (Radio buttons)
+     * @return - returns the type of Crust in type String
+     */
     private String getSelectedCrust() {
         if (thinCrustBtn.isSelected()) return "Thin Crust";
         if (regularCrustBtn.isSelected()) return "Regular Crust";
@@ -199,17 +202,27 @@ public class PizzaGUIFrame extends JFrame {
         return null;
     }
 
+    /**
+     * This method checks the state of the checkboxes to see what was selected and adds a dollar to the total Toppings price
+     * @return - returns the total toppings amount of type double.
+     */
     private double calculateToppingsPrice() {
         double total = 0;
-        if (pepCheckBox.isSelected()) total += toppingPrice;
-        if (baconCheckBox.isSelected()) total += toppingPrice;
-        if (mushroomCheckBox.isSelected()) total += toppingPrice;
-        if (pineappleCheckBox.isSelected()) total += toppingPrice;
-        if (chickenCheckBox.isSelected()) total += toppingPrice;
-        if (pickleCheckBox.isSelected()) total += toppingPrice;
+
+        JCheckBox[] toppings = {pepCheckBox, baconCheckBox,mushroomCheckBox,
+                pickleCheckBox, pineappleCheckBox,chickenCheckBox};
+
+        for (int i = 0; i < toppings.length; i++){
+            if (toppings[i].isSelected()){
+                total += toppingPrice;
+            }
+        }
         return total;
     }
 
+    /**
+     * This method sets all the buttons, check boxes, combo boxes to false (unchecked) or back to the first index of options (Combo Box)
+     */
     private void clearForm() {
         thinCrustBtn.setSelected(false);
         regularCrustBtn.setSelected(true); // Reset to default
@@ -224,3 +237,5 @@ public class PizzaGUIFrame extends JFrame {
         receiptTA.setText(""); // Clear receipt
     }
 }
+
+

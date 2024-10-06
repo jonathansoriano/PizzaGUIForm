@@ -224,4 +224,3 @@ public class PizzaGUITestFrame extends JFrame {
         receiptTA.setText(""); // Clear receipt
     }
 }
-
